@@ -49,20 +49,24 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
     const { page, pageSize } = params;
     const offset = (page - 1) * pageSize;
 
+    // Asegurar que los valores sean enteros
+    const limit = Math.floor(Number(pageSize));
+    const skip = Math.floor(Number(offset));
+
     // Consulta para obtener el total de registros
     const countSql = 'SELECT COUNT(*) as total FROM favorite_characters';
     const countResult = await this.db.query<RowDataPacket[]>(countSql);
     const total = countResult[0].total;
 
     // Consulta para obtener los registros paginados
-    const sql = `
-      SELECT id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender, created_at
-      FROM favorite_characters
-      ORDER BY created_at DESC
-      LIMIT ? OFFSET ?
-    `;
+    // NOTA: MySQL2 no soporta placeholders para LIMIT/OFFSET, se deben interpolar directamente
+    // Los valores ya están validados como enteros positivos mediante Math.floor()
+    const sql = `SELECT id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender, created_at 
+                 FROM favorite_characters 
+                 ORDER BY created_at DESC 
+                 LIMIT ${limit} OFFSET ${skip}`;
 
-    const rows = await this.db.query<RowDataPacket[]>(sql, [pageSize, offset]);
+    const rows = await this.db.query<RowDataPacket[]>(sql);
     
     const data: FavoriteCharacter[] = rows.map(row => ({
       id: row.id,

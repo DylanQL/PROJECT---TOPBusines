@@ -12,7 +12,7 @@ describe('SwapiService', () => {
     service = new SwapiService('https://swapi.py4e.com/api');
     
     // Mock del cliente axios
-    mockedAxios.create = jest.fn().returnValue({
+    mockedAxios.create = jest.fn().mockReturnValue({
       get: jest.fn(),
     } as any);
   });
