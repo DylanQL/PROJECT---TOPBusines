@@ -16,8 +16,8 @@ export class FavoriteController {
    */
   createFavorite = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const character = req.body;
-      const favorite = await this.createFavoriteUseCase.execute(character);
+      const { character_id } = req.body;
+      const favorite = await this.createFavoriteUseCase.execute(character_id);
 
       res.status(201).json({
         success: true,

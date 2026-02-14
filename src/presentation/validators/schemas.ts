@@ -2,47 +2,14 @@ import Joi from 'joi';
 
 /**
  * Schema de validación para crear un personaje favorito
+ * Solo requiere el ID del personaje de SWAPI
  */
 export const createFavoriteSchema = Joi.object({
-  swapi_id: Joi.number().integer().min(1).required().messages({
-    'number.base': 'El swapi_id debe ser un número',
-    'number.integer': 'El swapi_id debe ser un entero',
-    'number.min': 'El swapi_id debe ser mayor o igual a 1',
-    'any.required': 'El swapi_id es requerido',
-  }),
-  name: Joi.string().required().trim().min(1).max(255).messages({
-    'string.empty': 'El nombre es requerido',
-    'string.min': 'El nombre debe tener al menos 1 carácter',
-    'string.max': 'El nombre no puede exceder 255 caracteres',
-    'any.required': 'El nombre es requerido',
-  }),
-  height: Joi.string().required().trim().messages({
-    'string.empty': 'La altura es requerida',
-    'any.required': 'La altura es requerida',
-  }),
-  mass: Joi.string().required().trim().messages({
-    'string.empty': 'El peso es requerido',
-    'any.required': 'El peso es requerido',
-  }),
-  hair_color: Joi.string().required().trim().messages({
-    'string.empty': 'El color de cabello es requerido',
-    'any.required': 'El color de cabello es requerido',
-  }),
-  skin_color: Joi.string().required().trim().messages({
-    'string.empty': 'El color de piel es requerido',
-    'any.required': 'El color de piel es requerido',
-  }),
-  eye_color: Joi.string().required().trim().messages({
-    'string.empty': 'El color de ojos es requerido',
-    'any.required': 'El color de ojos es requerido',
-  }),
-  birth_year: Joi.string().required().trim().messages({
-    'string.empty': 'El año de nacimiento es requerido',
-    'any.required': 'El año de nacimiento es requerido',
-  }),
-  gender: Joi.string().required().trim().messages({
-    'string.empty': 'El género es requerido',
-    'any.required': 'El género es requerido',
+  character_id: Joi.number().integer().min(1).required().messages({
+    'number.base': 'El character_id debe ser un número',
+    'number.integer': 'El character_id debe ser un entero',
+    'number.min': 'El character_id debe ser mayor o igual a 1',
+    'any.required': 'El character_id es requerido',
   }),
 });
 

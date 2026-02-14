@@ -50,7 +50,7 @@ export function createApp(): Application {
   // Casos de uso
   const getCharactersUseCase = new GetCharactersUseCase(swapiService);
   const getCharacterByIdUseCase = new GetCharacterByIdUseCase(swapiService);
-  const createFavoriteUseCase = new CreateFavoriteUseCase(favoriteRepository);
+  const createFavoriteUseCase = new CreateFavoriteUseCase(favoriteRepository, swapiService);
   const getFavoritesUseCase = new GetFavoritesUseCase(favoriteRepository);
   
   // Controladores

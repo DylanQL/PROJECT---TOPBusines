@@ -1,10 +1,12 @@
 import { CreateFavoriteUseCase } from '../../src/application/use-cases/CreateFavoriteUseCase';
 import { IFavoriteRepository } from '../../src/domain/repositories/IFavoriteRepository';
+import { ISwapiService } from '../../src/domain/services/ISwapiService';
 import { Character, FavoriteCharacter } from '../../src/domain/entities/Character';
 
 describe('CreateFavoriteUseCase', () => {
   let useCase: CreateFavoriteUseCase;
   let mockRepository: jest.Mocked<IFavoriteRepository>;
+  let mockSwapiService: jest.Mocked<ISwapiService>;
 
   beforeEach(() => {
     // Crear mock del repositorio
@@ -15,12 +17,19 @@ describe('CreateFavoriteUseCase', () => {
       exists: jest.fn(),
     };
 
-    useCase = new CreateFavoriteUseCase(mockRepository);
+    // Crear mock del servicio SWAPI
+    mockSwapiService = {
+      getPersonById: jest.fn(),
+      getPeople: jest.fn(),
+    };
+
+    useCase = new CreateFavoriteUseCase(mockRepository, mockSwapiService);
   });
 
   describe('execute', () => {
-    const mockCharacter: Character & { swapi_id: number } = {
-      swapi_id: 1,
+    const characterId = 1;
+    
+    const mockCharacterData: Character = {
       name: 'Luke Skywalker',
       height: '172',
       mass: '77',
@@ -32,35 +41,43 @@ describe('CreateFavoriteUseCase', () => {
     };
 
     const mockFavoriteCharacter: FavoriteCharacter = {
-      ...mockCharacter,
       id: 1,
+      swapi_id: characterId,
+      ...mockCharacterData,
       created_at: new Date(),
     };
 
     it('debe crear un personaje favorito cuando no existe', async () => {
       // Arrange
+      mockSwapiService.getPersonById.mockResolvedValue(mockCharacterData);
       mockRepository.exists.mockResolvedValue(false);
       mockRepository.create.mockResolvedValue(mockFavoriteCharacter);
 
       // Act
-      const result = await useCase.execute(mockCharacter);
+      const result = await useCase.execute(characterId);
 
       // Assert
-      expect(mockRepository.exists).toHaveBeenCalledWith(mockCharacter.name);
-      expect(mockRepository.create).toHaveBeenCalledWith(mockCharacter);
+      expect(mockSwapiService.getPersonById).toHaveBeenCalledWith(characterId);
+      expect(mockRepository.exists).toHaveBeenCalledWith(mockCharacterData.name);
+      expect(mockRepository.create).toHaveBeenCalledWith({
+        swapi_id: characterId,
+        ...mockCharacterData,
+      });
       expect(result).toEqual(mockFavoriteCharacter);
     });
 
     it('debe lanzar error cuando el personaje ya existe', async () => {
       // Arrange
+      mockSwapiService.getPersonById.mockResolvedValue(mockCharacterData);
       mockRepository.exists.mockResolvedValue(true);
 
       // Act & Assert
-      await expect(useCase.execute(mockCharacter)).rejects.toThrow(
-        `El personaje "${mockCharacter.name}" ya existe en favoritos`
+      await expect(useCase.execute(characterId)).rejects.toThrow(
+        `El personaje "${mockCharacterData.name}" ya existe en favoritos`
       );
 
-      expect(mockRepository.exists).toHaveBeenCalledWith(mockCharacter.name);
+      expect(mockSwapiService.getPersonById).toHaveBeenCalledWith(characterId);
+      expect(mockRepository.exists).toHaveBeenCalledWith(mockCharacterData.name);
       expect(mockRepository.create).not.toHaveBeenCalled();
     });
   });
