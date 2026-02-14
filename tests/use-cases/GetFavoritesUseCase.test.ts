@@ -12,6 +12,7 @@ describe('GetFavoritesUseCase', () => {
       findAll: jest.fn(),
       findByName: jest.fn(),
       exists: jest.fn(),
+      delete: jest.fn(),
     };
 
     useCase = new GetFavoritesUseCase(mockRepository);

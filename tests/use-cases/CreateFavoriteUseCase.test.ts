@@ -15,6 +15,7 @@ describe('CreateFavoriteUseCase', () => {
       findAll: jest.fn(),
       findByName: jest.fn(),
       exists: jest.fn(),
+      delete: jest.fn(),
     };
 
     // Crear mock del servicio SWAPI

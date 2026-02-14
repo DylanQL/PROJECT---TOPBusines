@@ -167,4 +167,13 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
     const character = await this.findByName(name);
     return character !== null;
   }
+
+  /**
+   * Elimina un personaje favorito por su ID
+   */
+  async delete(id: number): Promise<boolean> {
+    const sql = 'DELETE FROM favorite_characters WHERE id = ?';
+    const result = await this.db.query<ResultSetHeader>(sql, [id]);
+    return result.affectedRows > 0;
+  }
 }

@@ -32,4 +32,11 @@ export interface IFavoriteRepository {
    * @returns true si existe, false en caso contrario
    */
   exists(name: string): Promise<boolean>;
+
+  /**
+   * Elimina un personaje favorito por su ID
+   * @param id ID del personaje favorito
+   * @returns true si se eliminó correctamente, false si no se encontró
+   */
+  delete(id: number): Promise<boolean>;
 }

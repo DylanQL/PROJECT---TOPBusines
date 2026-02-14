@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { FavoriteController } from '../controllers/FavoriteController';
-import { validateBody, validateQuery } from '../middlewares/validation';
-import { createFavoriteSchema, paginationSchema } from '../validators/schemas';
+import { validateBody, validateQuery, validateParams } from '../middlewares/validation';
+import { createFavoriteSchema, paginationSchema, characterIdSchema } from '../validators/schemas';
 
 /**
  * Crea las rutas para operaciones de favoritos
@@ -25,6 +25,14 @@ export function createFavoriteRoutes(controller: FavoriteController): Router {
    * @returns {Object} Lista paginada de favoritos
    */
   router.get('/', validateQuery(paginationSchema), controller.getFavorites);
+
+  /**
+   * @route DELETE /api/favorites/:id
+   * @description Elimina un personaje favorito por su ID
+   * @param id - ID del personaje favorito a eliminar
+   * @returns {Object} Confirmación de eliminación
+   */
+  router.delete('/:id', validateParams(characterIdSchema), controller.deleteFavorite);
 
   return router;
 }

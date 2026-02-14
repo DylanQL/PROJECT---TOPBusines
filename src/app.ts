@@ -6,6 +6,7 @@ import { GetCharactersUseCase } from './application/use-cases/GetCharactersUseCa
 import { GetCharacterByIdUseCase } from './application/use-cases/GetCharacterByIdUseCase';
 import { CreateFavoriteUseCase } from './application/use-cases/CreateFavoriteUseCase';
 import { GetFavoritesUseCase } from './application/use-cases/GetFavoritesUseCase';
+import { DeleteFavoriteUseCase } from './application/use-cases/DeleteFavoriteUseCase';
 import { CharacterController } from './presentation/controllers/CharacterController';
 import { FavoriteController } from './presentation/controllers/FavoriteController';
 import { createCharacterRoutes } from './presentation/routes/characterRoutes';
@@ -52,10 +53,11 @@ export function createApp(): Application {
   const getCharacterByIdUseCase = new GetCharacterByIdUseCase(swapiService);
   const createFavoriteUseCase = new CreateFavoriteUseCase(favoriteRepository, swapiService);
   const getFavoritesUseCase = new GetFavoritesUseCase(favoriteRepository);
+  const deleteFavoriteUseCase = new DeleteFavoriteUseCase(favoriteRepository);
   
   // Controladores
   const characterController = new CharacterController(getCharactersUseCase, getCharacterByIdUseCase);
-  const favoriteController = new FavoriteController(createFavoriteUseCase, getFavoritesUseCase);
+  const favoriteController = new FavoriteController(createFavoriteUseCase, getFavoritesUseCase, deleteFavoriteUseCase);
 
   // Ruta de health check
   app.get('/health', (_req: any, res: any) => {

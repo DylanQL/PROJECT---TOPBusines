@@ -22,6 +22,7 @@ app.listen(PORT, () => {
   console.log(`   GET    /api/characters/:id      - Obtener personaje por ID`);
   console.log(`   GET    /api/favorites           - Listar favoritos`);
   console.log(`   POST   /api/favorites           - Crear favorito`);
+  console.log(`   DELETE /api/favorites/:id       - Eliminar favorito`);
   console.log('');
   console.log('Presiona CTRL+C para detener el servidor');
   console.log('═══════════════════════════════════════════════════════');

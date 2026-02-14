@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { CreateFavoriteUseCase } from '../../application/use-cases/CreateFavoriteUseCase';
 import { GetFavoritesUseCase } from '../../application/use-cases/GetFavoritesUseCase';
+import { DeleteFavoriteUseCase } from '../../application/use-cases/DeleteFavoriteUseCase';
 
 /**
  * Controlador para operaciones relacionadas con personajes favoritos
@@ -8,7 +9,8 @@ import { GetFavoritesUseCase } from '../../application/use-cases/GetFavoritesUse
 export class FavoriteController {
   constructor(
     private createFavoriteUseCase: CreateFavoriteUseCase,
-    private getFavoritesUseCase: GetFavoritesUseCase
+    private getFavoritesUseCase: GetFavoritesUseCase,
+    private deleteFavoriteUseCase: DeleteFavoriteUseCase
   ) {}
 
   /**
@@ -44,6 +46,23 @@ export class FavoriteController {
         success: true,
         data: result.data,
         pagination: result.pagination,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Elimina un personaje favorito por su ID
+   */
+  deleteFavorite = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = Number(req.params.id);
+      await this.deleteFavoriteUseCase.execute(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Personaje eliminado de favoritos exitosamente',
       });
     } catch (error) {
       next(error);
