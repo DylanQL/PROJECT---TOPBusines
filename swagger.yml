@@ -195,7 +195,12 @@ paths:
 
     post:
       summary: Crear personaje favorito
-      description: Guarda un personaje como favorito en la base de datos
+      description: |
+        Guarda un personaje como favorito en la base de datos.
+        Solo requiere el ID del personaje de SWAPI. El backend se encarga automáticamente de:
+        - Obtener todos los datos del personaje desde SWAPI
+        - Validar que el personaje existe
+        - Guardar el registro completo con swapi_id en la base de datos
       tags:
         - Favorites
       requestBody:
@@ -203,16 +208,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Character'
+              $ref: '#/components/schemas/CreateFavoriteRequest'
             example:
-              name: Luke Skywalker
-              height: '172'
-              mass: '77'
-              hair_color: blond
-              skin_color: fair
-              eye_color: blue
-              birth_year: 19BBY
-              gender: male
+              character_id: 1
       responses:
         '201':
           description: Personaje guardado exitosamente
@@ -290,7 +288,11 @@ components:
           properties:
             id:
               type: integer
-              description: ID único del registro
+              description: ID único del registro en la base de datos
+              example: 1
+            swapi_id:
+              type: integer
+              description: ID del personaje en SWAPI
               example: 1
             created_at:
               type: string
@@ -328,6 +330,17 @@ components:
           type: string
           example: Error al procesar la solicitud
 
+    CreateFavoriteRequest:
+      type: object
+      required:
+        - character_id
+      properties:
+        character_id:
+          type: integer
+          minimum: 1
+          description: ID del personaje en SWAPI
+          example: 1
+
     ValidationError:
       type: object
       properties:
@@ -344,7 +357,7 @@ components:
             properties:
               field:
                 type: string
-                example: name
+                example: character_id
               message:
                 type: string
-                example: El nombre es requerido
+                example: El character_id debe ser un número
