@@ -1,4 +1,4 @@
-import { Character, SwapiPeopleResponse } from '../entities/Character';
+import { Character } from '../entities/Character';
 
 /**
  * Interfaz del servicio de SWAPI

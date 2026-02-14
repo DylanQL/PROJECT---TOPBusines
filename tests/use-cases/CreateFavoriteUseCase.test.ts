@@ -19,7 +19,8 @@ describe('CreateFavoriteUseCase', () => {
   });
 
   describe('execute', () => {
-    const mockCharacter: Character = {
+    const mockCharacter: Character & { swapi_id: number } = {
+      swapi_id: 1,
       name: 'Luke Skywalker',
       height: '172',
       mass: '77',

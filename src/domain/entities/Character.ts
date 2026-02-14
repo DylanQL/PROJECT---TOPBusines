@@ -18,6 +18,7 @@ export interface Character {
  */
 export interface FavoriteCharacter extends Character {
   id: number;
+  swapi_id: number;
   created_at: Date;
 }
 

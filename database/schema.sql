@@ -30,6 +30,9 @@ CREATE TABLE favorite_characters (
   -- Clave primaria autoincremental
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   
+  -- ID del personaje en la API externa de SWAPI
+  swapi_id INT UNSIGNED NOT NULL COMMENT 'ID del personaje en SWAPI',
+  
   -- Campos del personaje (según especificaciones SWAPI)
   name VARCHAR(255) NOT NULL COMMENT 'Nombre del personaje',
   height VARCHAR(50) NOT NULL COMMENT 'Altura del personaje',
@@ -45,7 +48,8 @@ CREATE TABLE favorite_characters (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización',
   
   -- Índices para mejorar el rendimiento
-  UNIQUE KEY uk_name (name) COMMENT 'Evita duplicados por nombre',
+  UNIQUE KEY uk_swapi_id (swapi_id) COMMENT 'Evita duplicados del mismo personaje de SWAPI',
+  INDEX idx_name (name) COMMENT 'Búsqueda rápida por nombre',
   INDEX idx_created_at (created_at) COMMENT 'Índice para ordenamiento por fecha'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Tabla de personajes favoritos de Star Wars';

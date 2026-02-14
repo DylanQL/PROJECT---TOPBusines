@@ -4,6 +4,12 @@ import Joi from 'joi';
  * Schema de validación para crear un personaje favorito
  */
 export const createFavoriteSchema = Joi.object({
+  swapi_id: Joi.number().integer().min(1).required().messages({
+    'number.base': 'El swapi_id debe ser un número',
+    'number.integer': 'El swapi_id debe ser un entero',
+    'number.min': 'El swapi_id debe ser mayor o igual a 1',
+    'any.required': 'El swapi_id es requerido',
+  }),
   name: Joi.string().required().trim().min(1).max(255).messages({
     'string.empty': 'El nombre es requerido',
     'string.min': 'El nombre debe tener al menos 1 carácter',

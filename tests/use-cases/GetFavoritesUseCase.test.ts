@@ -21,6 +21,7 @@ describe('GetFavoritesUseCase', () => {
     const mockFavorites: FavoriteCharacter[] = [
       {
         id: 1,
+        swapi_id: 1,
         name: 'Luke Skywalker',
         height: '172',
         mass: '77',

@@ -15,11 +15,12 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
   async create(character: Omit<FavoriteCharacter, 'id' | 'created_at'>): Promise<FavoriteCharacter> {
     const sql = `
       INSERT INTO favorite_characters 
-      (name, height, mass, hair_color, skin_color, eye_color, birth_year, gender)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (swapi_id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const params = [
+      character.swapi_id,
       character.name,
       character.height,
       character.mass,
@@ -61,7 +62,7 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
     // Consulta para obtener los registros paginados
     // NOTA: MySQL2 no soporta placeholders para LIMIT/OFFSET, se deben interpolar directamente
     // Los valores ya están validados como enteros positivos mediante Math.floor()
-    const sql = `SELECT id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender, created_at 
+    const sql = `SELECT id, swapi_id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender, created_at 
                  FROM favorite_characters 
                  ORDER BY created_at DESC 
                  LIMIT ${limit} OFFSET ${skip}`;
@@ -70,6 +71,7 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
     
     const data: FavoriteCharacter[] = rows.map(row => ({
       id: row.id,
+      swapi_id: row.swapi_id,
       name: row.name,
       height: row.height,
       mass: row.mass,
@@ -97,7 +99,7 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
    */
   async findByName(name: string): Promise<FavoriteCharacter | null> {
     const sql = `
-      SELECT id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender, created_at
+      SELECT id, swapi_id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender, created_at
       FROM favorite_characters
       WHERE name = ?
       LIMIT 1
@@ -112,6 +114,7 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
     const row = rows[0];
     return {
       id: row.id,
+      swapi_id: row.swapi_id,
       name: row.name,
       height: row.height,
       mass: row.mass,
@@ -129,7 +132,7 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
    */
   private async findById(id: number): Promise<FavoriteCharacter | null> {
     const sql = `
-      SELECT id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender, created_at
+      SELECT id, swapi_id, name, height, mass, hair_color, skin_color, eye_color, birth_year, gender, created_at
       FROM favorite_characters
       WHERE id = ?
       LIMIT 1
@@ -144,6 +147,7 @@ export class MySQLFavoriteRepository implements IFavoriteRepository {
     const row = rows[0];
     return {
       id: row.id,
+      swapi_id: row.swapi_id,
       name: row.name,
       height: row.height,
       mass: row.mass,

@@ -10,11 +10,11 @@ export class CreateFavoriteUseCase {
 
   /**
    * Ejecuta el caso de uso
-   * @param character Datos del personaje a guardar
+   * @param character Datos del personaje a guardar (incluye swapi_id)
    * @returns El personaje guardado con su ID
    * @throws Error si el personaje ya existe en favoritos
    */
-  async execute(character: Character): Promise<FavoriteCharacter> {
+  async execute(character: Character & { swapi_id: number }): Promise<FavoriteCharacter> {
     // Verificar si el personaje ya existe
     const exists = await this.favoriteRepository.exists(character.name);
     
