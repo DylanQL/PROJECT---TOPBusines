@@ -1,0 +1,350 @@
+openapi: 3.0.0
+info:
+  title: SEIDOR SWAPI Backend API
+  description: |
+    API Backend para consumir SWAPI (Star Wars API) y gestionar personajes favoritos.
+    
+    Esta API permite:
+    - Consultar personajes desde SWAPI
+    - Guardar personajes como favoritos en base de datos MySQL
+    - Listar personajes favoritos con paginación
+    
+    Desarrollada con TypeScript, Express y preparada para AWS Lambda.
+  version: 1.0.0
+  contact:
+    name: SEIDOR Project
+    email: support@seidor.com
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo local
+  - url: https://api.seidor.com
+    description: Servidor de producción (AWS Lambda)
+
+tags:
+  - name: Characters
+    description: Operaciones relacionadas con personajes de SWAPI
+  - name: Favorites
+    description: Operaciones relacionadas con personajes favoritos
+  - name: Health
+    description: Estado de la API
+
+paths:
+  /health:
+    get:
+      summary: Verificar estado de la API
+      description: Endpoint para verificar que la API está funcionando correctamente
+      tags:
+        - Health
+      responses:
+        '200':
+          description: API funcionando correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: API funcionando correctamente
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /api/characters:
+    get:
+      summary: Obtener listado de personajes
+      description: Obtiene el listado de personajes desde SWAPI con transformación de datos
+      tags:
+        - Characters
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: Número de página (paginación de SWAPI)
+          example: 1
+      responses:
+        '200':
+          description: Listado de personajes obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                        example: 87
+                      next:
+                        type: string
+                        nullable: true
+                        example: 'https://swapi.py4e.com/api/people/?page=2'
+                      previous:
+                        type: string
+                        nullable: true
+                        example: null
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Character'
+        '502':
+          description: Error al comunicarse con SWAPI
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/characters/{id}:
+    get:
+      summary: Obtener un personaje específico
+      description: Obtiene un personaje de SWAPI por su ID
+      tags:
+        - Characters
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: ID del personaje en SWAPI
+          example: 1
+      responses:
+        '200':
+          description: Personaje obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Character'
+        '400':
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Personaje no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/favorites:
+    get:
+      summary: Obtener personajes favoritos
+      description: Obtiene el listado de personajes guardados como favoritos con paginación
+      tags:
+        - Favorites
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Número de página
+          example: 1
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Cantidad de registros por página
+          example: 10
+      responses:
+        '200':
+          description: Listado de favoritos obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FavoriteCharacter'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '400':
+          description: Parámetros de paginación inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+    post:
+      summary: Crear personaje favorito
+      description: Guarda un personaje como favorito en la base de datos
+      tags:
+        - Favorites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Character'
+            example:
+              name: Luke Skywalker
+              height: '172'
+              mass: '77'
+              hair_color: blond
+              skin_color: fair
+              eye_color: blue
+              birth_year: 19BBY
+              gender: male
+      responses:
+        '201':
+          description: Personaje guardado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Personaje agregado a favoritos exitosamente
+                  data:
+                    $ref: '#/components/schemas/FavoriteCharacter'
+        '400':
+          description: Error de validación o personaje duplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+components:
+  schemas:
+    Character:
+      type: object
+      required:
+        - name
+        - height
+        - mass
+        - hair_color
+        - skin_color
+        - eye_color
+        - birth_year
+        - gender
+      properties:
+        name:
+          type: string
+          description: Nombre del personaje
+          example: Luke Skywalker
+        height:
+          type: string
+          description: Altura del personaje
+          example: '172'
+        mass:
+          type: string
+          description: Peso del personaje
+          example: '77'
+        hair_color:
+          type: string
+          description: Color de cabello
+          example: blond
+        skin_color:
+          type: string
+          description: Color de piel
+          example: fair
+        eye_color:
+          type: string
+          description: Color de ojos
+          example: blue
+        birth_year:
+          type: string
+          description: Año de nacimiento (BBY/ABY)
+          example: 19BBY
+        gender:
+          type: string
+          description: Género del personaje
+          example: male
+
+    FavoriteCharacter:
+      allOf:
+        - $ref: '#/components/schemas/Character'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: ID único del registro
+              example: 1
+            created_at:
+              type: string
+              format: date-time
+              description: Fecha de creación del registro
+              example: '2026-02-14T10:30:00.000Z'
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Página actual
+          example: 1
+        pageSize:
+          type: integer
+          description: Tamaño de la página
+          example: 10
+        total:
+          type: integer
+          description: Total de registros
+          example: 25
+        totalPages:
+          type: integer
+          description: Total de páginas
+          example: 3
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Error al procesar la solicitud
+
+    ValidationError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Error de validación
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: name
+              message:
+                type: string
+                example: El nombre es requerido

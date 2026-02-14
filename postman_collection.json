@@ -1,0 +1,230 @@
+{
+  "info": {
+    "name": "SEIDOR SWAPI Backend API",
+    "description": "Colección de Postman para probar la API Backend de SWAPI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        },
+        "description": "Verifica que la API esté funcionando correctamente"
+      }
+    },
+    {
+      "name": "Characters",
+      "item": [
+        {
+          "name": "Get All Characters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/characters",
+              "host": ["{{base_url}}"],
+              "path": ["api", "characters"]
+            },
+            "description": "Obtiene el listado de personajes desde SWAPI (página 1)"
+          }
+        },
+        {
+          "name": "Get Characters - Page 2",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/characters?page=2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "characters"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                }
+              ]
+            },
+            "description": "Obtiene la página 2 de personajes"
+          }
+        },
+        {
+          "name": "Get Character by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/characters/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "characters", "1"]
+            },
+            "description": "Obtiene Luke Skywalker (ID 1)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "Get All Favorites",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["api", "favorites"]
+            },
+            "description": "Obtiene todos los favoritos (página 1, 10 por página)"
+          }
+        },
+        {
+          "name": "Get Favorites - Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/favorites?page=1&pageSize=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "favorites"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Obtiene favoritos con paginación personalizada"
+          }
+        },
+        {
+          "name": "Create Favorite - Luke Skywalker",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Luke Skywalker\",\n  \"height\": \"172\",\n  \"mass\": \"77\",\n  \"hair_color\": \"blond\",\n  \"skin_color\": \"fair\",\n  \"eye_color\": \"blue\",\n  \"birth_year\": \"19BBY\",\n  \"gender\": \"male\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["api", "favorites"]
+            },
+            "description": "Crea un favorito con Luke Skywalker"
+          }
+        },
+        {
+          "name": "Create Favorite - Leia Organa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Leia Organa\",\n  \"height\": \"150\",\n  \"mass\": \"49\",\n  \"hair_color\": \"brown\",\n  \"skin_color\": \"light\",\n  \"eye_color\": \"brown\",\n  \"birth_year\": \"19BBY\",\n  \"gender\": \"female\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["api", "favorites"]
+            },
+            "description": "Crea un favorito con Leia Organa"
+          }
+        },
+        {
+          "name": "Create Favorite - Darth Vader",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Darth Vader\",\n  \"height\": \"202\",\n  \"mass\": \"136\",\n  \"hair_color\": \"none\",\n  \"skin_color\": \"white\",\n  \"eye_color\": \"yellow\",\n  \"birth_year\": \"41.9BBY\",\n  \"gender\": \"male\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["api", "favorites"]
+            },
+            "description": "Crea un favorito con Darth Vader"
+          }
+        },
+        {
+          "name": "Create Favorite - Invalid (Missing Fields)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Character\",\n  \"height\": \"180\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["api", "favorites"]
+            },
+            "description": "Prueba de error de validación (campos faltantes)"
+          }
+        },
+        {
+          "name": "Create Favorite - Duplicate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Luke Skywalker\",\n  \"height\": \"172\",\n  \"mass\": \"77\",\n  \"hair_color\": \"blond\",\n  \"skin_color\": \"fair\",\n  \"eye_color\": \"blue\",\n  \"birth_year\": \"19BBY\",\n  \"gender\": \"male\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["api", "favorites"]
+            },
+            "description": "Prueba de error de duplicado (ejecutar después de crear Luke)"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
